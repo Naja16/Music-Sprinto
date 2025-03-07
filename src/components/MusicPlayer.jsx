@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Pause, Play, SkipBack, SkipForward } from "lucide-react";
 
-const ITUNES_API_URL = "/api/itunes";
+const ITUNES_API_URL = "https://itunes.apple.com/search?term=top&media=music&limit=10";
 
 export default function MusicPlayer() {
   const [songs, setSongs] = useState([]);
