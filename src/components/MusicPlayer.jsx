@@ -1,60 +1,21 @@
-import { useEffect, useState } from "react";
 import { Pause, Play, SkipBack, SkipForward } from "lucide-react";
-
-const ITUNES_API_URL = "https://corsproxy.io/?https://itunes.apple.com/search?term=top&media=music&limit=10";
+import { useMusic } from "../context/MusicContext";
+import { useMusicPlayer } from "../hooks/useMusicPlayer";
+import { useFetchSongs } from "../hooks/useFetchSongs";
 
 export default function MusicPlayer() {
-  const [songs, setSongs] = useState([]);
-  const [currentSongIndex, setCurrentSongIndex] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const audioRef = useState(new Audio())[0];
+  const { songs, currentSongIndex, isPlaying, isLoading, error } = useMusic();
+  const { playSong, skipSong } = useMusicPlayer();
+  useFetchSongs();
 
-  useEffect(() => {
-    const fetchSongs = async () => {
-      try {
-        const response = await fetch(ITUNES_API_URL);
-        if (!response.ok) {
-          throw new Error("Failed to fetch songs");
-        }
-        const data = await response.json();
-        setSongs(data.results.slice(0, 8));
-      } catch (err) {
-        console.error("Error fetching songs:", err);
-      }
-    };
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
-    fetchSongs();
-  }, []);
-
-  const playSong = (index) => {
-    const song = songs[index];
-    if (!song) return;
-    if (currentSongIndex === index) {
-      if (isPlaying) {
-        audioRef.pause();
-      } else {
-        audioRef.play();
-      }
-      setIsPlaying(!isPlaying);
-    } else {
-      audioRef.src = song.previewUrl;
-      audioRef.play();
-      setCurrentSongIndex(index);
-      setIsPlaying(true);
-    }
-  };
-
-  const skipSong = (direction) => {
-    if (songs.length === 0) return;
-    let newIndex =
-      direction === "next" ? currentSongIndex + 1 : currentSongIndex - 1;
-    if (newIndex < 0) newIndex = songs.length - 1;
-    if (newIndex >= songs.length) newIndex = 0;
-    playSong(newIndex);
-  };
   return (
     <div className="p-4 max-w-md mx-auto bg-[#0D1117] text-white rounded-lg">
-      <h1 className="text-2xl font-bold mb-4 text-center">Liked Songs</h1>
+      <div className="text-[24px] font-bold mb-4 text-left ml-4">
+        Liked Songs
+      </div>
       <div className="grid grid-cols-2 gap-4">
         {songs.map((song, index) => (
           <div
@@ -82,7 +43,7 @@ export default function MusicPlayer() {
         ))}
       </div>
       {currentSongIndex !== null && (
-        <div className="fixed bottom-0 left-0 w-full bg-[#161B22] p-4 flex items-center justify-between shadow-lg z-10 left-0">
+        <div className="fixed bottom-0 left-0 w-full bg-[#161B22] p-4 flex items-center justify-between shadow-lg z-10">
           <div className="flex items-center space-x-4">
             <img
               src={songs[currentSongIndex].artworkUrl100}
@@ -90,10 +51,10 @@ export default function MusicPlayer() {
               className="w-16 h-16 object-cover rounded-md"
             />
             <div>
-              <span className="block font-medium text-lg truncate w-40">
+              <span className="block font-medium text-md truncate w-40">
                 {songs[currentSongIndex].trackName}
               </span>
-              <span className="block text-sm text-gray-400">
+              <span className="block text-xs text-gray-400">
                 {songs[currentSongIndex].artistName}
               </span>
             </div>

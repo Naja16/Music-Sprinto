@@ -4,13 +4,14 @@ import viteLogo from '/vite.svg'
 import './App.css'
 // import LikedSongs from './pages/LikedSongs'
 import MusicPlayer from './components/MusicPlayer'
+import { MusicProvider } from "./context/MusicContext";
 
 function App() {
   return (
-    <div className="relative min-h-screen">
+    <MusicProvider>
       <MusicPlayer />
-    </div>
-  )
+    </MusicProvider>
+  );
 }
 
 export default App

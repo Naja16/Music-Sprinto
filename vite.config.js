@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       "*/api/itunes": {
-        target: "https://itunes.apple.com/search?term=top&media=music&limit=10",
+        target: "https://itunes.apple.com/search?term=top&media=music&limit=14",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/itunes/, ""),
         secure: false,
