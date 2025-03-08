@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useMusic } from "../context/MusicContext";
+import { SONGS_LIST } from "../constants/songsList";
 
 const ITUNES_API_URL = "/api/itunes";
 
@@ -21,7 +22,16 @@ export function useFetchSongs() {
         dispatch({ type: "SET_ERROR", payload: err.message });
       }
     };
-
-    fetchSongs();
+    const fetchMockSongs = () => {
+      setTimeout(() => {
+        try {
+          dispatch({ type: "SET_SONGS", payload: SONGS_LIST });
+        } catch (err) {
+          console.error("Error loading mock songs:", err);
+          dispatch({ type: "SET_ERROR", payload: "Failed to load songs" });
+        }
+      }, 100);
+    };
+    fetchMockSongs();
   }, [dispatch]);
 }
